@@ -153,7 +153,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
+    <div className="site-shell min-h-screen">
       <Header
         isMenuOpen={isMenuOpen}
         onToggleMenu={() => setIsMenuOpen((isOpen) => !isOpen)}
@@ -179,7 +179,7 @@ function App() {
         onInputChange={handleInputChange}
         onSubmit={handleSubmit}
       />
-      <Footer />
+      <Footer onNavigate={scrollToSection} />
     </div>
   )
 }
