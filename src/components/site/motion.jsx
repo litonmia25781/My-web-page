@@ -1,13 +1,13 @@
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion'
+import { motion as Motion, useMotionValue, useReducedMotion, useSpring, useTransform, useScroll } from 'framer-motion'
+import { useRef } from 'react'
 
-const _motion = motion
 const ease = [0.22, 1, 0.36, 1]
 
 export function Reveal({ children, className = '', delay = 0, y = 24, ...props }) {
   const shouldReduceMotion = useReducedMotion()
 
   return (
-    <motion.div
+    <Motion.div
       className={className}
       initial={shouldReduceMotion ? false : { opacity: 0, y }}
       whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
@@ -16,7 +16,7 @@ export function Reveal({ children, className = '', delay = 0, y = 24, ...props }
       {...props}
     >
       {children}
-    </motion.div>
+    </Motion.div>
   )
 }
 
@@ -31,7 +31,7 @@ export function Stagger({ children, className = '', delayChildren = 0, staggerCh
   }
 
   return (
-    <motion.div
+    <Motion.div
       className={className}
       variants={variants}
       initial={shouldReduceMotion ? false : 'hidden'}
@@ -40,7 +40,7 @@ export function Stagger({ children, className = '', delayChildren = 0, staggerCh
       {...props}
     >
       {children}
-    </motion.div>
+    </Motion.div>
   )
 }
 
@@ -48,14 +48,14 @@ export function StaggerItem({ children, className = '', ...props }) {
   const shouldReduceMotion = useReducedMotion()
 
   return (
-    <motion.div
+    <Motion.div
       className={className}
       variants={{ hidden: { opacity: 0, y: 22 }, visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease } } }}
       initial={shouldReduceMotion ? false : undefined}
       {...props}
     >
       {children}
-    </motion.div>
+    </Motion.div>
   )
 }
 
@@ -63,8 +63,10 @@ export function TiltCard({ children, className = '', ...props }) {
   const shouldReduceMotion = useReducedMotion()
   const pointerX = useMotionValue(0)
   const pointerY = useMotionValue(0)
-  const rotateX = useSpring(useTransform(pointerY, [-0.5, 0.5], [5, -5]), { stiffness: 180, damping: 22 })
-  const rotateY = useSpring(useTransform(pointerX, [-0.5, 0.5], [-5, 5]), { stiffness: 180, damping: 22 })
+  const rotateX = useSpring(useTransform(pointerY, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 })
+  const rotateY = useSpring(useTransform(pointerX, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 })
+  const glowX = useSpring(useTransform(pointerX, [-0.5, 0.5], [0, 100]), { stiffness: 150, damping: 20 })
+  const glowY = useSpring(useTransform(pointerY, [-0.5, 0.5], [0, 100]), { stiffness: 150, damping: 20 })
 
   const handlePointerMove = (event) => {
     if (shouldReduceMotion) return
@@ -79,16 +81,24 @@ export function TiltCard({ children, className = '', ...props }) {
   }
 
   return (
-    <motion.div
-      className={className}
+    <Motion.div
+      className={`relative transform-gpu ${className}`}
       onPointerMove={handlePointerMove}
       onPointerLeave={resetPointer}
-      style={shouldReduceMotion ? undefined : { rotateX, rotateY, transformPerspective: 1000 }}
-      whileHover={shouldReduceMotion ? undefined : { z: 10 }}
+      style={shouldReduceMotion ? undefined : { rotateX, rotateY, transformPerspective: 1200 }}
+      whileHover={shouldReduceMotion ? undefined : { z: 20 }}
       {...props}
     >
       {children}
-    </motion.div>
+      {!shouldReduceMotion && (
+        <Motion.div
+          className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(255,255,255,0.15), transparent 80%)`,
+          }}
+        />
+      )}
+    </Motion.div>
   )
 }
 
@@ -96,13 +106,32 @@ export function FloatingOrb({ className = '', delay = 0, duration = 8, ...props 
   const shouldReduceMotion = useReducedMotion()
 
   return (
-    <motion.div
+    <Motion.div
       aria-hidden="true"
       className={className}
-      animate={shouldReduceMotion ? undefined : { y: [0, -16, 0], x: [0, 10, 0], scale: [1, 1.06, 1] }}
+      animate={shouldReduceMotion ? undefined : { y: [0, -20, 0], x: [0, 15, 0], scale: [1, 1.1, 1] }}
       transition={{ duration, delay, repeat: Infinity, ease: 'easeInOut' }}
       {...props}
     />
+  )
+}
+
+export function Parallax({ children, offset = 50, className = '', ...props }) {
+  const ref = useRef(null)
+  const shouldReduceMotion = useReducedMotion()
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  })
+
+  const y = useTransform(scrollYProgress, [0, 1], [-offset, offset])
+
+  return (
+    <div ref={ref} className={className} {...props}>
+      <Motion.div style={shouldReduceMotion ? undefined : { y }}>
+        {children}
+      </Motion.div>
+    </div>
   )
 }
 

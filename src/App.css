@@ -41,58 +41,45 @@
 }
 
 :root {
-  --radius: 0.75rem;
-  --background: oklch(0.97 0.018 245);
-  --foreground: oklch(0.19 0.035 247);
-  --card: oklch(0.99 0.008 245);
-  --card-foreground: oklch(0.19 0.035 247);
-  --popover: oklch(0.99 0.008 245);
-  --popover-foreground: oklch(0.19 0.035 247);
-  --primary: oklch(0.48 0.21 251);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.93 0.04 235);
+  --radius: 1rem;
+  --background: oklch(0.98 0.01 245);
+  --foreground: oklch(0.15 0.03 247);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.03 247);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.03 247);
+  --primary: oklch(0.45 0.22 255);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.95 0.03 235);
   --secondary-foreground: oklch(0.3 0.08 247);
-  --muted: oklch(0.94 0.02 245);
-  --muted-foreground: oklch(0.5 0.04 247);
-  --accent: oklch(0.79 0.16 82);
+  --muted: oklch(0.95 0.02 245);
+  --muted-foreground: oklch(0.45 0.04 247);
+  --accent: oklch(0.85 0.18 85);
   --accent-foreground: oklch(0.2 0.04 70);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.87 0.045 245);
-  --input: oklch(0.87 0.045 245);
-  --ring: oklch(0.62 0.17 247);
-  --chart-1: oklch(0.56 0.2 251);
-  --chart-2: oklch(0.72 0.16 82);
-  --chart-3: oklch(0.4 0.08 227);
-  --chart-4: oklch(0.67 0.17 185);
-  --chart-5: oklch(0.6 0.19 25);
-  --sidebar: oklch(0.985 0.01 245);
-  --sidebar-foreground: oklch(0.19 0.035 247);
-  --sidebar-primary: oklch(0.48 0.21 251);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.93 0.04 235);
-  --sidebar-border: oklch(0.87 0.045 245);
-  --sidebar-ring: oklch(0.62 0.17 247);
+  --destructive: oklch(0.55 0.22 25);
+  --border: oklch(0.9 0.03 245);
+  --input: oklch(0.9 0.03 245);
+  --ring: oklch(0.45 0.22 255);
 }
 
 .dark {
-  --background: oklch(0.12 0.03 247);
-  --foreground: oklch(0.96 0.02 245);
-  --card: oklch(0.16 0.035 247);
-  --card-foreground: oklch(0.96 0.02 245);
-  --popover: oklch(0.16 0.035 247);
-  --popover-foreground: oklch(0.96 0.02 245);
-  --primary: oklch(0.72 0.18 247);
-  --primary-foreground: oklch(0.14 0.03 247);
-  --secondary: oklch(0.22 0.04 247);
-  --secondary-foreground: oklch(0.96 0.02 245);
-  --muted: oklch(0.22 0.04 247);
-  --muted-foreground: oklch(0.74 0.04 247);
-  --accent: oklch(0.82 0.17 82);
-  --accent-foreground: oklch(0.18 0.03 70);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.72 0.18 247);
+  --background: oklch(0.1 0.03 247);
+  --foreground: oklch(0.98 0.01 245);
+  --card: oklch(0.14 0.03 247);
+  --card-foreground: oklch(0.98 0.01 245);
+  --popover: oklch(0.14 0.03 247);
+  --popover-foreground: oklch(0.98 0.01 245);
+  --primary: oklch(0.7 0.18 250);
+  --primary-foreground: oklch(0.1 0.03 247);
+  --secondary: oklch(0.2 0.04 247);
+  --secondary-foreground: oklch(0.98 0.01 245);
+  --muted: oklch(0.2 0.04 247);
+  --muted-foreground: oklch(0.7 0.04 247);
+  --accent: oklch(0.85 0.18 85);
+  --accent-foreground: oklch(0.15 0.03 70);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.7 0.18 250);
 }
 
 @layer base {
@@ -110,190 +97,127 @@
     overflow-x: hidden;
     font-family: "Noto Sans Bengali", "Hind Siliguri", system-ui, sans-serif;
   }
-
-  button,
-  a,
-  input,
-  textarea,
-  select {
-    -webkit-tap-highlight-color: transparent;
-  }
 }
 
+/* Site Shell & Backgrounds */
 .site-shell {
-  background:
-    radial-gradient(circle at 8% 10%, rgb(92 151 255 / 0.16), transparent 28rem),
-    radial-gradient(circle at 92% 34%, rgb(254 208 75 / 0.12), transparent 24rem),
-    linear-gradient(135deg, #f7fbff 0%, #edf5ff 45%, #f8fbff 100%);
-}
-
-.site-section {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(250, 204, 21, 0.05) 0%, transparent 40%),
+    #f8fafc;
 }
 
 .section-grid {
-  background-image: linear-gradient(rgb(37 99 235 / 0.07) 1px, transparent 1px), linear-gradient(90deg, rgb(37 99 235 / 0.07) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: linear-gradient(to bottom, transparent, black 18%, black 80%, transparent);
-  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(37, 99, 235, 0.1) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
 }
 
 .hero-grid {
-  background-image: linear-gradient(rgb(129 198 255 / 0.14) 1px, transparent 1px), linear-gradient(90deg, rgb(129 198 255 / 0.14) 1px, transparent 1px);
-  background-size: 54px 54px;
-  mask-image: linear-gradient(to bottom, black 0%, black 65%, transparent 100%);
+  background-image: 
+    linear-gradient(rgba(37, 99, 235, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at center, black, transparent 80%);
 }
 
-.hero-glow {
-  background: radial-gradient(circle, rgb(76 167 255 / 0.36) 0%, rgb(76 167 255 / 0.08) 38%, transparent 72%);
-  filter: blur(12px);
-}
-
-.hero-orbit {
-  border: 1px solid rgb(155 213 255 / 0.42);
-  box-shadow: 0 0 42px rgb(44 147 255 / 0.18), inset 0 0 28px rgb(44 147 255 / 0.1);
-}
-
+/* Glassmorphism & Depth */
 .glass-panel {
-  background: linear-gradient(135deg, rgb(255 255 255 / 0.78), rgb(235 246 255 / 0.52));
-  border: 1px solid rgb(255 255 255 / 0.78);
-  box-shadow: 0 24px 70px rgb(25 73 132 / 0.13), inset 0 1px 0 rgb(255 255 255 / 0.9);
-  backdrop-filter: blur(18px);
+  @apply backdrop-blur-xl;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.07),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 .glass-panel-dark {
-  background: linear-gradient(135deg, rgb(9 31 66 / 0.93), rgb(15 62 117 / 0.82));
-  border: 1px solid rgb(131 205 255 / 0.24);
-  box-shadow: 0 30px 90px rgb(1 16 42 / 0.35), inset 0 1px 0 rgb(255 255 255 / 0.1);
-  backdrop-filter: blur(18px);
+  @apply backdrop-blur-xl;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
 .depth-card {
-  position: relative;
   transform-style: preserve-3d;
-  transition: box-shadow 300ms ease, border-color 300ms ease, background 300ms ease;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.depth-card::after {
-  position: absolute;
-  inset: 10px -10px -10px 10px;
-  z-index: -1;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgb(37 99 235 / 0.16), transparent 55%);
-  content: "";
-  filter: blur(14px);
-  opacity: 0;
-  transition: opacity 300ms ease;
+.depth-card:hover {
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 0 20px rgba(37, 99, 235, 0.1);
 }
 
-.depth-card:hover,
-.depth-card:focus-within {
-  border-color: rgb(96 165 250 / 0.65);
-  box-shadow: 0 24px 60px rgb(30 88 164 / 0.18), inset 0 1px 0 rgb(255 255 255 / 0.85);
-}
-
-.depth-card:hover::after,
-.depth-card:focus-within::after {
-  opacity: 1;
-}
-
+/* Electrical Effects */
 .electric-border {
   position: relative;
-  isolation: isolate;
+  border-radius: inherit;
+  overflow: hidden;
 }
 
 .electric-border::before {
-  position: absolute;
-  inset: -1px;
-  z-index: -1;
-  border-radius: inherit;
-  background: conic-gradient(from 90deg, transparent, rgb(96 165 250 / 0.9), rgb(250 204 21 / 0.9), transparent 42%);
   content: "";
-  opacity: 0.55;
-  animation: border-flow 7s linear infinite;
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    transparent,
+    rgba(37, 99, 235, 0.3),
+    rgba(250, 204, 21, 0.3),
+    transparent 40%
+  );
+  animation: rotate 6s linear infinite;
 }
 
-.section-kicker {
-  margin-bottom: 0.75rem;
-  color: #2563eb;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.section-title {
-  color: #0f274b;
-  font-size: clamp(2rem, 4vw, 3.4rem);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-}
-
-.section-description {
-  margin-top: 1rem;
-  color: #51657c;
-  font-size: 1.06rem;
-  line-height: 1.85;
+.electric-glow {
+  filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.4));
 }
 
 .text-gradient {
-  background: linear-gradient(115deg, #0e50c5 0%, #2b9eff 48%, #e3a900 100%);
-  background-clip: text;
-  color: transparent;
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #facc15 100%);
 }
 
-.typing-animation {
-  display: inline-flex;
-  min-height: 1.5em;
-  border-right: 2px solid #facc15;
-  padding-right: 0.45rem;
-  color: #2563eb;
-  animation: blink 1s infinite;
-}
-
-.pulse-glow {
-  animation: pulse-glow 3.8s ease-in-out infinite;
-}
-
-.float-slow {
-  animation: float-slow 7s ease-in-out infinite;
-}
-
-@keyframes blink {
-  0%, 50% { border-color: #facc15; }
-  51%, 100% { border-color: transparent; }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 rgb(96 165 250 / 0), 0 24px 70px rgb(25 73 132 / 0.13); }
-  50% { box-shadow: 0 0 36px rgb(96 165 250 / 0.2), 0 24px 70px rgb(25 73 132 / 0.18); }
-}
-
-@keyframes float-slow {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(0, -12px, 0); }
-}
-
-@keyframes border-flow {
+/* Animations */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-@media (max-width: 767px) {
-  .section-title { font-size: 2.35rem; }
-  .glass-panel { backdrop-filter: blur(12px); }
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
 }
 
+.animate-pulse-soft {
+  animation: pulse-soft 4s ease-in-out infinite;
+}
+
+/* Section Specifics */
+.section-kicker {
+  @apply mb-4 text-xs font-black tracking-[0.3em] uppercase text-primary/80;
+}
+
+.section-title {
+  @apply text-3xl md:text-5xl font-black tracking-tighter text-slate-900 leading-[1.1];
+}
+
+.section-description {
+  @apply mt-6 text-lg text-slate-600 leading-relaxed max-w-2xl;
+}
+
+/* Responsive Overrides */
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
+  *, ::before, ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
     scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
   }
 }
