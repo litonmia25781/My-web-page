@@ -133,6 +133,20 @@ export function Contact({ formData, isSubmitting, submitMessage, onInputChange, 
                   placeholder="আপনার ইমেল ঠিকানা"
                 />
               </div>
+
+              <div className="space-y-2">
+                <label htmlFor="subject" className="text-[10px] font-black tracking-widest text-slate-400 uppercase">বিষয়</label>
+                <input 
+                  type="text" 
+                  id="subject" 
+                  name="subject" 
+                  value={formData.subject} 
+                  onChange={onInputChange} 
+                  required 
+                  className="w-full rounded-2xl border border-slate-200 bg-white/50 px-6 py-4 text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 transition-all"
+                  placeholder="বার্তার বিষয়"
+                />
+              </div>
               
               <div className="space-y-2">
                 <label htmlFor="message" className="text-[10px] font-black tracking-widest text-slate-400 uppercase">বার্তা</label>

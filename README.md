@@ -18,7 +18,9 @@ pnpm build
 pnpm preview
 ```
 
-## Firebase configuration
+## Configuration
+
+### Firebase Configuration
 
 The site renders static testimonials when Firebase is not configured. To enable live testimonials and contact/review submissions, copy `.env.example` to `.env.local` and add the Firebase Web App values:
 
@@ -26,7 +28,17 @@ The site renders static testimonials when Firebase is not configured. To enable 
 cp .env.example .env.local
 ```
 
-The same `VITE_FIREBASE_*` variables must be added to the Vercel project under **Settings → Environment Variables** for Production, Preview, and Development as required.
+The same `VITE_FIREBASE_*` variables must be added to the Vercel project under **Settings → Environment Variables**.
+
+### Resend Email Integration
+
+The contact form sends emails using the Resend API via a server-side Vercel function. The following environment variables are required:
+
+- `RESEND_API_KEY`: Your Resend API key.
+- `RESEND_CONTACT_EMAIL`: The email address where contact-form messages should be received.
+- `RESEND_FROM_EMAIL`: A verified sender email configured in Resend.
+
+These variables should be added to Vercel under **Settings → Environment Variables**. Do **not** use the `VITE_` prefix for these secrets, as they are used only on the server side.
 
 ## Vercel deployment
 

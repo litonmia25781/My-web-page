@@ -18,6 +18,7 @@ function App() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    subject: '',
     message: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -105,8 +106,22 @@ function App() {
         createdAt: new Date().toISOString(),
       })
 
+      // Send email via Resend API
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to send email')
+      }
+
       setSubmitMessage('আপনার বার্তা সফলভাবে পাঠানো হয়েছে! আমরা শীঘ্রই যোগাযোগ করব।')
-      setFormData({ name: '', email: '', message: '' })
+      setFormData({ name: '', email: '', subject: '', message: '' })
     } catch (error) {
       console.error('Error sending message:', error)
       setSubmitMessage('বার্তা পাঠাতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।')
