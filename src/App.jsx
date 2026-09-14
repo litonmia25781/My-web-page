@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { onValue, push, ref, serverTimestamp } from 'firebase/database'
+import { equalTo, onValue, orderByChild, push, query, ref, serverTimestamp } from 'firebase/database'
 import { database, isFirebaseConfigured } from './lib/firebase'
 import { About } from './components/site/About'
 import { Contact } from './components/site/Contact'
@@ -12,24 +12,50 @@ import { Testimonials } from './components/site/Testimonials'
 import { rotatingSkills, staticTestimonials } from './data/siteContent'
 import './App.css'
 
+const initialContactForm = { name: '', email: '', subject: '', message: '' }
+const initialReviewForm = { name: '', comment: '', rating: 5 }
+
+function isApproved(testimonial) {
+  return testimonial.status === 'approved'
+}
+
+function mergeApprovedTestimonials(remoteTestimonials) {
+  const trustedTestimonials = staticTestimonials.map((testimonial) => ({
+    ...testimonial,
+    status: 'approved',
+  }))
+  const approvedRemote = remoteTestimonials.filter(isApproved)
+  const seen = new Set(trustedTestimonials.map((testimonial) => `${testimonial.name}:${testimonial.comment}`))
+
+  return [
+    ...trustedTestimonials,
+    ...approvedRemote.filter((testimonial) => {
+      const key = `${testimonial.name}:${testimonial.comment}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    }),
+  ].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+}
+
+function validateContactForm(form) {
+  return form.name.trim() && form.email.trim() && form.subject.trim() && form.message.trim()
+}
+
+function validateReviewForm(form) {
+  const rating = Number(form.rating)
+  return form.name.trim() && form.comment.trim() && Number.isInteger(rating) && rating >= 1 && rating <= 5
+}
+
 function App() {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  })
+  const [formData, setFormData] = useState(initialContactForm)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState('')
-  const [testimonials, setTestimonials] = useState([])
+  const [testimonials, setTestimonials] = useState(() => mergeApprovedTestimonials([]))
   const [loadingTestimonials, setLoadingTestimonials] = useState(true)
-  const [reviewForm, setReviewForm] = useState({
-    name: '',
-    comment: '',
-    rating: 5,
-  })
+  const [reviewForm, setReviewForm] = useState(initialReviewForm)
   const [isSubmittingReview, setIsSubmittingReview] = useState(false)
   const [reviewMessage, setReviewMessage] = useState('')
 
@@ -43,30 +69,22 @@ function App() {
 
   useEffect(() => {
     if (!isFirebaseConfigured || !database) {
-      setTestimonials(staticTestimonials)
       setLoadingTestimonials(false)
       return undefined
     }
 
-    const testimonialsRef = ref(database, 'testimonials')
+    const testimonialsRef = query(ref(database, 'testimonials'), orderByChild('status'), equalTo('approved'))
     const unsubscribe = onValue(
       testimonialsRef,
       (snapshot) => {
-        const data = snapshot.val()
-        if (data) {
-          const testimonialsArray = Object.keys(data).map((key) => ({
-            id: key,
-            ...data[key],
-          }))
-          testimonialsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
-          setTestimonials(testimonialsArray)
-        } else {
-          setTestimonials(staticTestimonials)
-        }
+        const data = snapshot.val() || {}
+        const remoteTestimonials = Object.entries(data).map(([id, testimonial]) => ({ id, ...testimonial }))
+        setTestimonials(mergeApprovedTestimonials(remoteTestimonials))
         setLoadingTestimonials(false)
       },
-      () => {
-        setTestimonials(staticTestimonials)
+      (error) => {
+        console.error('Error loading testimonials:', error)
+        setTestimonials(mergeApprovedTestimonials([]))
         setLoadingTestimonials(false)
       },
     )
@@ -81,10 +99,7 @@ function App() {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target
-    setFormData((previousForm) => ({
-      ...previousForm,
-      [name]: value,
-    }))
+    setFormData((previousForm) => ({ ...previousForm, [name]: value }))
   }
 
   const handleSubmit = async (event) => {
@@ -92,36 +107,38 @@ function App() {
     setIsSubmitting(true)
     setSubmitMessage('')
 
-    if (!isFirebaseConfigured || !database) {
-      setSubmitMessage('অনলাইন বার্তা সেবা বর্তমানে কনফিগার করা নেই। অনুগ্রহ করে ফোন বা হোয়াটসঅ্যাপে যোগাযোগ করুন।')
+    if (!validateContactForm(formData)) {
+      setSubmitMessage('অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন।')
       setIsSubmitting(false)
       return
     }
 
     try {
-      const messagesRef = ref(database, 'messages')
-      await push(messagesRef, {
-        ...formData,
-        timestamp: serverTimestamp(),
-        createdAt: new Date().toISOString(),
-      })
-
-      // Send email via Resend API
       const response = await fetch('/api/send-email', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
 
+      const responseData = await response.json().catch(() => ({}))
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to send email')
+        throw new Error(responseData.error || `Email service returned ${response.status}`)
+      }
+
+      if (isFirebaseConfigured && database) {
+        try {
+          await push(ref(database, 'messages'), {
+            ...formData,
+            timestamp: serverTimestamp(),
+            createdAt: new Date().toISOString(),
+          })
+        } catch (archiveError) {
+          console.error('Message delivered but Firebase archival failed:', archiveError)
+        }
       }
 
       setSubmitMessage('আপনার বার্তা সফলভাবে পাঠানো হয়েছে! আমরা শীঘ্রই যোগাযোগ করব।')
-      setFormData({ name: '', email: '', subject: '', message: '' })
+      setFormData(initialContactForm)
     } catch (error) {
       console.error('Error sending message:', error)
       setSubmitMessage('বার্তা পাঠাতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।')
@@ -132,10 +149,7 @@ function App() {
 
   const handleReviewInputChange = (event) => {
     const { name, value } = event.target
-    setReviewForm((previousForm) => ({
-      ...previousForm,
-      [name]: value,
-    }))
+    setReviewForm((previousForm) => ({ ...previousForm, [name]: value }))
   }
 
   const handleReviewSubmit = async (event) => {
@@ -149,16 +163,24 @@ function App() {
       return
     }
 
+    if (!validateReviewForm(reviewForm)) {
+      setReviewMessage('অনুগ্রহ করে নাম, ১–৫ রেটিং এবং মতামত সঠিকভাবে দিন।')
+      setIsSubmittingReview(false)
+      return
+    }
+
     try {
-      const testimonialsRef = ref(database, 'testimonials')
-      await push(testimonialsRef, {
-        ...reviewForm,
+      await push(ref(database, 'testimonials'), {
+        name: reviewForm.name.trim(),
+        comment: reviewForm.comment.trim(),
+        rating: Number(reviewForm.rating),
+        status: 'pending',
         timestamp: serverTimestamp(),
         createdAt: new Date().toISOString(),
       })
 
-      setReviewMessage('আপনার মতামত সফলভাবে যোগ করা হয়েছে! ধন্যবাদ।')
-      setReviewForm({ name: '', comment: '', rating: 5 })
+      setReviewMessage('আপনার মতামত জমা হয়েছে। অনুমোদনের পর এটি প্রকাশিত হবে।')
+      setReviewForm(initialReviewForm)
     } catch (error) {
       console.error('Error submitting review:', error)
       setReviewMessage('মতামত জমা দিতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।')
@@ -169,11 +191,7 @@ function App() {
 
   return (
     <div className="site-shell min-h-screen">
-      <Header
-        isMenuOpen={isMenuOpen}
-        onToggleMenu={() => setIsMenuOpen((isOpen) => !isOpen)}
-        onNavigate={scrollToSection}
-      />
+      <Header isMenuOpen={isMenuOpen} onToggleMenu={() => setIsMenuOpen((isOpen) => !isOpen)} onNavigate={scrollToSection} />
       <Hero currentSkill={rotatingSkills[currentSkillIndex]} onNavigate={scrollToSection} />
       <Services />
       <About />

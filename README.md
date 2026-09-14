@@ -22,13 +22,15 @@ pnpm preview
 
 ### Firebase Configuration
 
-The site renders static testimonials when Firebase is not configured. To enable live testimonials and contact/review submissions, copy `.env.example` to `.env.local` and add the Firebase Web App values:
+The site always keeps the existing trusted testimonials available locally. Firebase enables approved live testimonials, public review submissions, and optional archival of contact messages. Copy `.env.example` to `.env.local` and add the Firebase Web App values:
 
 ```bash
 cp .env.example .env.local
 ```
 
-The same `VITE_FIREBASE_*` variables must be added to the Vercel project under **Settings → Environment Variables**.
+The same `VITE_FIREBASE_*` variables must be added to the Vercel project under **Settings → Environment Variables** for the production build. If they are missing, the contact form still sends through the server-side Resend endpoint; only Firebase archival and review submission are unavailable.
+
+New reviews are written with `status: "pending"` and are never rendered publicly until an operator changes the record to `status: "approved"`. The current client has no moderation credentials; approval should be performed through the Firebase Console or a future authenticated moderation tool. A non-deployed proposal and test checklist are in `firebase/database.rules.proposed.json` and `firebase/testimonials-rules-checklist.md`.
 
 ### Resend Email Integration
 
@@ -39,6 +41,8 @@ The contact form sends emails using the Resend API via a server-side Vercel func
 - `RESEND_FROM_EMAIL`: A verified sender email configured in Resend.
 
 These variables should be added to Vercel under **Settings → Environment Variables**. Do **not** use the `VITE_` prefix for these secrets, as they are used only on the server side.
+
+After changing environment variables in Vercel, redeploy the production branch. Vercel injects `VITE_*` values at build time, so changing them does not repair an already-built deployment until a new deployment is created.
 
 ## Vercel deployment
 

@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "testimonials": {
+      ".indexOn": ["status"],
+      ".read": "query.orderByChild == 'status' && query.equalTo == 'approved'",
+      "$testimonialId": {
+        ".write": "!data.exists() && newData.exists()",
+        ".validate": "newData.hasChildren(['name', 'comment', 'rating', 'status', 'timestamp', 'createdAt']) && newData.numChildren() == 6 && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 100 && newData.child('comment').isString() && newData.child('comment').val().length >= 1 && newData.child('comment').val().length <= 2000 && newData.child('rating').isNumber() && newData.child('rating').val() >= 1 && newData.child('rating').val() <= 5 && newData.child('rating').val() % 1 == 0 && newData.child('status').isString() && newData.child('status').val() == 'pending' && newData.child('timestamp').isNumber() && newData.child('timestamp').val() <= now && newData.child('createdAt').isString() && newData.child('createdAt').val().length >= 20 && newData.child('createdAt').val().length <= 30"
+      }
+    }
+  }
+}
